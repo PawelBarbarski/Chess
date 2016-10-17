@@ -1,9 +1,10 @@
+package game;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.zip.DataFormatException;
 
 /**
  * Created by pbarbarski on 01/09/2016.
@@ -80,7 +81,7 @@ public class ChessSet extends HashSet<Piece> {
             kingMoved.move(toFile, toRank, castling);
         } else {
             this.pieceOnPathCheck(fromFile, fromRank, toFile, toRank);
-            this.pieceMoved.move(toFile, toRank);
+            this.pieceMoved.move(toFile, toRank, false);
         }
         Iterator<Piece> iterator = this.iterator();
         do {
@@ -193,7 +194,7 @@ public class ChessSet extends HashSet<Piece> {
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         boolean isChosen = false;
         while (!isChosen) {
-            System.out.println("Pawn promoted to a piece:");
+            System.out.println("game.Pawn promoted to a piece:");
             String notation = br.readLine();
             switch (notation) {
                 case ("Q"):
@@ -233,7 +234,7 @@ public class ChessSet extends HashSet<Piece> {
                         Rook rookMoved = (Rook) this.pieceFound;
                         if (rookMoved.white == king.white && !rookMoved.moved) {
                             this.pieceOnPathCheck(fromFile, fromRank, 7, fromRank);
-                            rookMoved.move(5, toRank);
+                            rookMoved.move(5, toRank, false);
                             castling = true;
                         } else {
                             throw new ChessRulesException("There's no rook to make a castling.");
@@ -250,7 +251,7 @@ public class ChessSet extends HashSet<Piece> {
                         Rook rookMoved = (Rook) this.pieceFound;
                         if (rookMoved.white == king.white && !rookMoved.moved) {
                             this.pieceOnPathCheck(fromFile, fromRank, 0, fromRank);
-                            rookMoved.move(3, toRank);
+                            rookMoved.move(3, toRank, false);
                             castling = true;
                         } else {
                             throw new ChessRulesException("There's no rook to make a castling.");

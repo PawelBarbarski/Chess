@@ -1,16 +1,14 @@
-import java.io.IOException;
-import java.util.zip.DataFormatException;
+package game;
 
 /**
  * Created by pbarbarski on 01/09/2016.
  */
-public class Pawn extends Piece {
+class Pawn extends Piece {
 
-    public boolean twoSquareMove;
+    boolean twoSquareMove;
 
-    public Pawn(int file, int rank, boolean white) {
-        super(file, rank, white);
-        this.symbol = 'p';
+    Pawn(int file, int rank, boolean white) {
+        super(file, rank, white, 'p');
         this.twoSquareMove = false;
     }
 

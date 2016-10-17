@@ -1,16 +1,14 @@
-import java.io.IOException;
-import java.util.zip.DataFormatException;
+package game;
 
 /**
  * Created by pbarbarski on 01/09/2016.
  */
-public class King extends Piece {
+class King extends Piece {
 
-    public boolean moved;
+    boolean moved;
 
-    public King(int file, int rank, boolean white) {
-        super(file, rank, white);
-        this.symbol = 'K';
+    King(int file, int rank, boolean white) {
+        super(file, rank, white, 'K');
         this.moved = false;
     }
 
@@ -20,7 +18,7 @@ public class King extends Piece {
                 && Math.abs(this.rank - rank) <= 1)){
             throw new ChessRulesException("A king moves one square in any direction (or it can make a castling).");
         }
-        super.move(file, rank);
+        super.move(file, rank, castling);
         this.moved = true;
     }
 }

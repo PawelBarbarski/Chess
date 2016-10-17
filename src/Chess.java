@@ -1,66 +1,78 @@
+import game.AbstractChessboard;
+import game.ChessSet;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.zip.DataFormatException;
+import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by pbarbarski on 01/09/2016.
  */
 public class Chess {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException {
 
-        System.out.println("Hello. It's a program for paying chess by Paweł Barbarski.\n" +
-                "Please input the moves in the argebraic notation in the form: 'a1-b2'");
+        System.out.println("Hello. It's a program for playing chess by Paweł Barbarski.");
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         ChessSet chessSet = new ChessSet();
-        AbstractChessboard chessboard = new Chessboard();
-        while(true) {
-            chessboard.draw(chessSet);
-            System.out.println(sideName(chessSet.whitesMove) + "'s move.");
-            int[] moveSquares;
-            try {
-                moveSquares = getMove(br);
-            } catch (Resignation e) {
-                System.out.println("Resignation. " + sideName(!chessSet.whitesMove) + " won.");
-                break;
-            } catch (ChessRulesException e){
-                System.out.println(e.getMessage());
-                continue;
+        AbstractChessboard chessboard;
+        boolean isChosen = false;
+        Class[] chessboards = getChessboards();
+        while (!isChosen) {
+            System.out.println("Which chessboards would you like to play?\nPlease choose a number denoting one of the following:\n");
+            System.out.println("0. Exit the program.");
+            for (int i = 1; i <= chessboards.length; i++) {
+                try {
+                    System.out.println(Integer.toString(i) + ". " + chessboards[i-1].getDeclaredField("description").get(null));
+                } catch (NoSuchFieldException e) {
+                    System.out.println(Integer.toString(i) + ". " + chessboards[i-1].getName());
+                }
             }
             try {
-                chessSet.move(moveSquares[0], moveSquares[1], moveSquares[2], moveSquares[3]);
-            } catch (ChessRulesException e){
-                System.out.println(e.getMessage());
+                int chessboardSymbol = Integer.parseInt(br.readLine());
+                if (chessboardSymbol == 0) {
+                    isChosen = true;
+                } else if (chessboardSymbol >= 1 && chessboardSymbol <= chessboards.length) {
+                    isChosen = true;
+                    chessboard = (AbstractChessboard) chessboards[chessboardSymbol - 1].newInstance();
+                    chessboard.play(chessSet);
+                } else {
+                    isChosen = false;
+                    System.out.println("Wrong number.");
+                }
+            } catch (NumberFormatException e) {
+                isChosen = false;
+                System.out.println("Wrong number.");
             }
         }
     }
 
-    private static int[] getMove(BufferedReader br) throws IOException, Resignation, ChessRulesException {
-
-        String notation = br.readLine();
-        if (notation.matches("X")) {
-            throw new Resignation();
+    private static Class[] getChessboards() {
+        String packageName = "chessboards";
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        URL resource = classLoader.getResource(packageName);
+        File directory = new File(resource.getFile());
+        ArrayList<Class> classes = new ArrayList<>();
+        if (directory.exists()) {
+            File[] files = directory.listFiles();
+            for (File file : files) {
+                if (file.getName().endsWith(".class")) {
+                    try {
+                        Class clazz = Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6));
+                        if (AbstractChessboard.class.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.getModifiers())) {
+                            classes.add(clazz);
+                        }
+                    } catch (ClassNotFoundException e) {
+                    }
+                }
+            }
         }
-        if (!notation.matches("^[a-h][1-8]-[a-h][1-8]$")) {
-            throw new ChessRulesException("Chess notation error.");
-        }
-        if (notation.charAt(0) == notation.charAt(3) && notation.charAt(1) == notation.charAt(4)){
-            throw new ChessRulesException("One piece have to be moved.");
-        }
-        int[] moveSquares = new int[4];
-        moveSquares[0] = (int) notation.charAt(0) - 97;
-        moveSquares[1] = (int) notation.charAt(1) - 49;
-        moveSquares[2] = (int) notation.charAt(3) - 97;
-        moveSquares[3] = (int) notation.charAt(4) - 49;
-        return moveSquares;
+        return classes.toArray(new Class[classes.size()]);
     }
 
-    private static String sideName(boolean white){
-        if (white){
-            return "White";
-        } else {
-            return "Black";
-        }
-    }
+
 }

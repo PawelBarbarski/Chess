@@ -8,23 +8,23 @@ import game.*;
 
 /**
  * Created by pbarbarski on 02/09/2016.
- * AbstractChessboard implementation for consoles supporting ANSI escape symbols
+ * Chessboard implementation for consoles supporting ANSI escape symbols
  */
-public class ANSIConsoleChessboard implements AbstractChessboard {
+public class ANSIConsoleChessboard implements Chessboard {
 
-    public static final String description = "Console chessboards (console supporting ANSI escape symbols recommended)";
+    public static final String description = "Console Chessboard (console supporting ANSI escape symbols recommended)";
 
     public void play(ChessSet chessSet) throws IOException {
         System.out.println("Please input the moves in the argebraic notation in the form: 'a1-b2'");
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while(true) {
             this.draw(chessSet);
-            System.out.println(sideName(chessSet.whitesMove) + "'s move.");
+            System.out.println(Chessboard.sideName(chessSet.whitesMove) + "'s move.");
             int[] moveSquares;
             try {
                 moveSquares = getMove(br);
             } catch (Resignation e) {
-                System.out.println("Resignation. " + sideName(!chessSet.whitesMove) + " won.");
+                System.out.println("Resignation. " + Chessboard.sideName(!chessSet.whitesMove) + " won.");
                 break;
             } catch (ChessRulesException e){
                 System.out.println(e.getMessage());
@@ -85,9 +85,6 @@ public class ANSIConsoleChessboard implements AbstractChessboard {
         if (!notation.matches("^[a-h][1-8]-[a-h][1-8]$")) {
             throw new ChessRulesException("Chess notation error.");
         }
-        if (notation.charAt(0) == notation.charAt(3) && notation.charAt(1) == notation.charAt(4)){
-            throw new ChessRulesException("One piece have to be moved.");
-        }
         int[] moveSquares = new int[4];
         moveSquares[0] = (int) notation.charAt(0) - 97;
         moveSquares[1] = (int) notation.charAt(1) - 49;
@@ -96,12 +93,6 @@ public class ANSIConsoleChessboard implements AbstractChessboard {
         return moveSquares;
     }
 
-    private static String sideName(boolean white){
-        if (white){
-            return "White";
-        } else {
-            return "Black";
-        }
-    }
+
 
 }

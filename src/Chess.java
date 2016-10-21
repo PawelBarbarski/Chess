@@ -1,4 +1,4 @@
-import game.AbstractChessboard;
+import game.Chessboard;
 import game.ChessSet;
 
 import java.io.BufferedReader;
@@ -12,18 +12,20 @@ import java.util.ArrayList;
 /**
  * Created by pbarbarski on 01/09/2016.
  */
-public class Chess {
+public final class Chess {
+
+    private Chess() {}
 
     public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException {
 
         System.out.println("Hello. It's a program for playing chess by Paweł Barbarski.");
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         ChessSet chessSet = new ChessSet();
-        AbstractChessboard chessboard;
+        Chessboard chessboard;
         boolean isChosen = false;
         Class[] chessboards = getChessboards();
         while (!isChosen) {
-            System.out.println("Which chessboards would you like to play?\nPlease choose a number denoting one of the following:\n");
+            System.out.println("Which chessboard would you like to play?\nPlease choose a number denoting one of the following:\n");
             System.out.println("0. Exit the program.");
             for (int i = 1; i <= chessboards.length; i++) {
                 try {
@@ -38,7 +40,7 @@ public class Chess {
                     isChosen = true;
                 } else if (chessboardSymbol >= 1 && chessboardSymbol <= chessboards.length) {
                     isChosen = true;
-                    chessboard = (AbstractChessboard) chessboards[chessboardSymbol - 1].newInstance();
+                    chessboard = (Chessboard) chessboards[chessboardSymbol - 1].newInstance();
                     chessboard.play(chessSet);
                 } else {
                     isChosen = false;
@@ -63,7 +65,7 @@ public class Chess {
                 if (file.getName().endsWith(".class")) {
                     try {
                         Class clazz = Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6));
-                        if (AbstractChessboard.class.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.getModifiers())) {
+                        if (Chessboard.class.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.getModifiers())) {
                             classes.add(clazz);
                         }
                     } catch (ClassNotFoundException e) {

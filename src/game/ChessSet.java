@@ -46,6 +46,9 @@ public class ChessSet extends HashSet<Piece> {
 
     public void move(int fromFile, int fromRank, int toFile, int toRank) throws ChessRulesException, IOException {
 
+        if (fromFile == toFile && fromRank == toRank) {
+            throw new ChessRulesException("One piece have to be moved.");
+        }
         this.capture = false;
         if (getPiece(fromFile, fromRank)) {
             if (this.pieceFound.white == this.whitesMove) {
@@ -86,7 +89,7 @@ public class ChessSet extends HashSet<Piece> {
         Iterator<Piece> iterator = this.iterator();
         do {
             Piece piece = iterator.next();
-            if (piece instanceof Pawn) {
+            if (piece instanceof Pawn && piece.white == !this.whitesMove) {
                 Pawn pawn = (Pawn) piece;
                 pawn.twoSquareMove = false;
             }
@@ -194,7 +197,7 @@ public class ChessSet extends HashSet<Piece> {
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         boolean isChosen = false;
         while (!isChosen) {
-            System.out.println("game.Pawn promoted to a piece:");
+            System.out.println("Pawn promoted to a piece:");
             String notation = br.readLine();
             switch (notation) {
                 case ("Q"):

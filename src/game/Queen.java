@@ -9,11 +9,10 @@ class Queen extends Piece {
         super(file, rank, white, 'Q');
     }
 
-    public void move(int file, int rank, boolean dump) throws ChessRulesException{
-
-        if(!(this.file - this.rank == file - rank
+    public void move(int file, int rank, boolean dump) throws ChessRulesException {
+        if (!(this.file - this.rank == file - rank
                 || this.file + this.rank == file + rank
-                || this.rank == rank || this.file == file)){
+                || this.rank == rank || this.file == file)) {
             throw new ChessRulesException("A queen moves along files, ranks or diagonals.");
         }
         super.move(file, rank, dump);

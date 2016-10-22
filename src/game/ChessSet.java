@@ -12,6 +12,7 @@ import java.util.Iterator;
 public class ChessSet extends HashSet<Piece> {
 
     public boolean whitesMove;
+    public boolean isPawnPromotion;
     private Piece pieceFound;
     private Piece pieceMoved;
     private Piece pieceCaptured;
@@ -45,7 +46,6 @@ public class ChessSet extends HashSet<Piece> {
     }
 
     public void move(int fromFile, int fromRank, int toFile, int toRank) throws ChessRulesException, IOException {
-
         if (fromFile == toFile && fromRank == toRank) {
             throw new ChessRulesException("One piece have to be moved.");
         }
@@ -76,9 +76,9 @@ public class ChessSet extends HashSet<Piece> {
             pawnMoved.move(toFile, toRank, this.capture);
             if ((this.pieceMoved.white && toRank == 7)
                     || (!this.pieceMoved.white && toRank == 0)) {
-                this.pawnPromotion();
+                this.isPawnPromotion = true;
             }
-        } else if (this.pieceMoved instanceof King){
+        } else if (this.pieceMoved instanceof King) {
             King kingMoved = (King) this.pieceMoved;
             boolean castling = this.castlingCheck(kingMoved, fromFile, fromRank, toFile, toRank);
             kingMoved.move(toFile, toRank, castling);
@@ -101,8 +101,29 @@ public class ChessSet extends HashSet<Piece> {
         this.whitesMove = !this.whitesMove;
     }
 
-    private boolean getPiece(int file, int rank) {
+    public void pawnPromotion(String symbol) {
+        switch (symbol) {
+            case ("Q"):
+                this.add(new Queen(this.pieceMoved.file, this.pieceMoved.rank, this.pieceMoved.white));
+                this.remove(this.pieceMoved);
+                break;
+            case ("R"):
+                this.add(new Rook(this.pieceMoved.file, this.pieceMoved.rank, this.pieceMoved.white));
+                this.remove(this.pieceMoved);
+                break;
+            case ("N"):
+                this.add(new Knight(this.pieceMoved.file, this.pieceMoved.rank, this.pieceMoved.white));
+                this.remove(this.pieceMoved);
+                break;
+            case ("B"):
+                this.add(new Bishop(this.pieceMoved.file, this.pieceMoved.rank, this.pieceMoved.white));
+                this.remove(this.pieceMoved);
+                break;
+        }
+        this.isPawnPromotion = false;
+    }
 
+    private boolean getPiece(int file, int rank) {
         Iterator<Piece> iterator = this.iterator();
         Piece piece;
         boolean isFound = false;
@@ -122,7 +143,6 @@ public class ChessSet extends HashSet<Piece> {
     }
 
     private void pieceOnPathCheck(int fromFile, int fromRank, int toFile, int toRank) throws ChessRulesException {
-
         if (fromFile == toFile) {
             for (int i = Math.min(fromRank, toRank) + 1;
                  i < Math.max(fromRank, toRank); i++) {
@@ -158,9 +178,8 @@ public class ChessSet extends HashSet<Piece> {
             }
         }
     }
-    
+
     private void InPassingCheck(int fromFile, int fromRank, int toFile, int toRank, boolean white) {
-        
         if (white) {
             if (fromRank == 4 && toRank == 5
                     && Math.abs(toFile - fromFile) == 1) {
@@ -191,44 +210,8 @@ public class ChessSet extends HashSet<Piece> {
             }
         }
     }
-    
-    private void pawnPromotion() throws IOException{
 
-        final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        boolean isChosen = false;
-        while (!isChosen) {
-            System.out.println("Pawn promoted to a piece:");
-            String notation = br.readLine();
-            switch (notation) {
-                case ("Q"):
-                    this.add(new Queen(this.pieceMoved.file, this.pieceMoved.rank, this.pieceMoved.white));
-                    this.remove(this.pieceMoved);
-                    isChosen = true;
-                    break;
-                case ("R"):
-                    this.add(new Rook(this.pieceMoved.file, this.pieceMoved.rank, this.pieceMoved.white));
-                    this.remove(this.pieceMoved);
-                    isChosen = true;
-                    break;
-                case ("N"):
-                    this.add(new Knight(this.pieceMoved.file, this.pieceMoved.rank, this.pieceMoved.white));
-                    this.remove(this.pieceMoved);
-                    isChosen = true;
-                    break;
-                case ("B"):
-                    this.add(new Bishop(this.pieceMoved.file, this.pieceMoved.rank, this.pieceMoved.white));
-                    this.remove(this.pieceMoved);
-                    isChosen = true;
-                    break;
-                default:
-                    System.out.println("A pawn can be promoted to a queen, a rook, a knight or a bishop.");
-                    break;
-            }
-        }
-    }
-
-    private boolean castlingCheck (King king, int fromFile, int fromRank, int toFile, int toRank) throws ChessRulesException{
-
+    private boolean castlingCheck(King king, int fromFile, int fromRank, int toFile, int toRank) throws ChessRulesException {
         boolean castling = false;
         if (!king.moved && toRank == fromRank) {
             if (toFile == fromFile + 2) {

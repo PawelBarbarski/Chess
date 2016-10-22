@@ -9,8 +9,8 @@ public interface Chessboard {
 
     void play(ChessSet chessSet) throws IOException;
 
-    static String sideName(boolean white){
-        if (white){
+    static String sideName(boolean white) {
+        if (white) {
             return "White";
         } else {
             return "Black";

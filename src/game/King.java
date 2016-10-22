@@ -12,10 +12,9 @@ class King extends Piece {
         this.moved = false;
     }
 
-    public void move(int file, int rank, boolean castling) throws ChessRulesException{
-
-        if(!castling && !(Math.abs(this.file - file) <= 1
-                && Math.abs(this.rank - rank) <= 1)){
+    public void move(int file, int rank, boolean castling) throws ChessRulesException {
+        if (!castling && !(Math.abs(this.file - file) <= 1
+                && Math.abs(this.rank - rank) <= 1)) {
             throw new ChessRulesException("A king moves one square in any direction (or it can make a castling).");
         }
         super.move(file, rank, castling);

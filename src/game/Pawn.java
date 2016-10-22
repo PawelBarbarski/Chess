@@ -13,7 +13,6 @@ class Pawn extends Piece {
     }
 
     public void move(int file, int rank, boolean capture) throws ChessRulesException {
-
         if (capture) {
             if (!(Math.abs(this.file - file) == 1
                     && ((rank - this.rank == 1 && this.white)

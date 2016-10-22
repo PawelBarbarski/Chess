@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
+
 import game.*;
 
 /**
@@ -17,7 +18,7 @@ public class ANSIConsoleChessboard implements Chessboard {
     public void play(ChessSet chessSet) throws IOException {
         System.out.println("Please input the moves in the argebraic notation in the form: 'a1-b2'");
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        while(true) {
+        while (true) {
             this.draw(chessSet);
             System.out.println(Chessboard.sideName(chessSet.whitesMove) + "'s move.");
             int[] moveSquares;
@@ -26,19 +27,32 @@ public class ANSIConsoleChessboard implements Chessboard {
             } catch (Resignation e) {
                 System.out.println("Resignation. " + Chessboard.sideName(!chessSet.whitesMove) + " won.");
                 break;
-            } catch (ChessRulesException e){
+            } catch (ChessRulesException e) {
                 System.out.println(e.getMessage());
                 continue;
             }
             try {
                 chessSet.move(moveSquares[0], moveSquares[1], moveSquares[2], moveSquares[3]);
-            } catch (ChessRulesException e){
+                if (chessSet.isPawnPromotion) {
+                    boolean isChosen = false;
+                    while (!isChosen) {
+                        System.out.println("Pawn promoted to a piece:");
+                        String notation = br.readLine();
+                        if ("Q".equals(notation) || "R".equals(notation) || "N".equals(notation) || "B".equals(notation)) {
+                            chessSet.pawnPromotion(notation);
+                            isChosen = true;
+                        } else {
+                            System.out.println("A pawn can be promoted to a queen, a rook, a knight, or a bishop.");
+                        }
+                    }
+                }
+            } catch (ChessRulesException e) {
                 System.out.println(e.getMessage());
             }
         }
     }
 
-    private void draw(ChessSet chessSet){
+    private void draw(ChessSet chessSet) {
         String[][] chessboard = new String[8][8];
         Iterator<Piece> iterator = chessSet.iterator();
         String pieceColour;
@@ -77,7 +91,6 @@ public class ANSIConsoleChessboard implements Chessboard {
     }
 
     private static int[] getMove(BufferedReader br) throws IOException, Resignation, ChessRulesException {
-
         String notation = br.readLine();
         if (notation.matches("X")) {
             throw new Resignation();
@@ -92,7 +105,6 @@ public class ANSIConsoleChessboard implements Chessboard {
         moveSquares[3] = (int) notation.charAt(4) - 49;
         return moveSquares;
     }
-
 
 
 }

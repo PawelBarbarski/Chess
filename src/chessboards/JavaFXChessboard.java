@@ -50,18 +50,18 @@ public class JavaFXChessboard extends Application implements Chessboard {
         gridPane.setVgap(0);
         draw(gridPane);
         messageLabel = new Label();
-        gridPane.add(messageLabel,0,8,8,1);
+        gridPane.add(messageLabel, 0, 8, 8, 1);
         Scene scene = new Scene(gridPane, 512, 512);
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
         primaryStage.show();
     }
 
-    private void draw (GridPane gridPane) {
-        Node[] nodes = new Node[128];
+    private void draw(GridPane gridPane) {
+        Node[] nodes = new Node[132];
         int n = 0;
-        for (Node node : gridPane.getChildren()){
-            if (node instanceof ImageView){
+        for (Node node : gridPane.getChildren()) {
+            if (node instanceof ImageView) {
                 nodes[n] = node;
                 n++;
             }
@@ -71,12 +71,12 @@ public class JavaFXChessboard extends Application implements Chessboard {
         }
         Image whiteSquare = new Image("/icons/sWhite.png");
         Image blackSquare = new Image("/icons/sBlack.png");
-        for (int i = 0; i < 8; i++){
-            for (int j = 0; j < 8; j++){
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
                 ImageView square = new ImageView();
                 square.setFitWidth(64);
                 square.setPreserveRatio(true);
-                if ((i+j) % 2 == 0){
+                if ((i + j) % 2 == 1) {
                     square.setImage(blackSquare);
                 } else {
                     square.setImage(whiteSquare);
@@ -89,7 +89,7 @@ public class JavaFXChessboard extends Application implements Chessboard {
                         move(gridPane, file, rank);
                     }
                 });
-                gridPane.add(square,i,j);
+                gridPane.add(square, i, j);
             }
         }
         for (Piece piece : chessSet) {
@@ -109,17 +109,55 @@ public class JavaFXChessboard extends Application implements Chessboard {
     }
 
     private void move(GridPane gridPane, int file, int rank) {
-        if(isFromSquare) {
-            fromFile = file;
-            fromRank = rank;
-        } else {
-            try {
-                chessSet.move(fromFile, fromRank, file, rank);
-            } catch (Exception e) {
-                messageLabel.setText(e.getMessage());
+        if (!chessSet.isPawnPromotion) {
+            if (isFromSquare) {
+                fromFile = file;
+                fromRank = rank;
+            } else {
+                try {
+                    chessSet.move(fromFile, fromRank, file, rank);
+                } catch (Exception e) {
+                    messageLabel.setText(e.getMessage());
+                }
+                draw(gridPane);
+                if (chessSet.isPawnPromotion) {
+                    messageLabel.setText("Pawn promoted to a piece:");
+                    String[] symbols = {"Q", "R", "N", "B"};
+                    int i = 0;
+                    for (String symbol : symbols) {
+                        Image squareImage = new Image("/icons/s" + Chessboard.sideName(i % 2 == 0) + ".png");
+                        ImageView squareView = new ImageView();
+                        squareView.setFitWidth(64);
+                        squareView.setPreserveRatio(true);
+                        squareView.setImage(squareImage);
+                        squareView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                chessSet.pawnPromotion(symbol);
+                                draw(gridPane);
+                            }
+                        });
+                        gridPane.add(squareView, i, 9);
+                        Image pieceImage = new Image("/icons/" + symbol + Chessboard.sideName(!chessSet.whitesMove) + ".png");
+                        ImageView pieceView = new ImageView();
+                        pieceView.setFitWidth(64);
+                        pieceView.setPreserveRatio(true);
+                        pieceView.setImage(pieceImage);
+                        pieceView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                chessSet.pawnPromotion(symbol);
+                                draw(gridPane);
+                            }
+                        });
+                        gridPane.add(pieceView, i, 9);
+                        i++;
+                    }
+                }
             }
-            draw(gridPane);
+            isFromSquare = !isFromSquare;
+        } else {
+            messageLabel.setText("You cannot move any piece. Please choose a piece the pawn should be promoted to first.");
         }
-        isFromSquare = !isFromSquare;
     }
 }

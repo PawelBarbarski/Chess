@@ -9,10 +9,9 @@ class Bishop extends Piece {
         super(file, rank, white, 'B');
     }
 
-    public void move(int file, int rank, boolean dump) throws ChessRulesException{
-
-        if(!(this.file - this.rank == file - rank
-                || this.file + this.rank == file + rank)){
+    public void move(int file, int rank, boolean dump) throws ChessRulesException {
+        if (!(this.file - this.rank == file - rank
+                || this.file + this.rank == file + rank)) {
             throw new ChessRulesException("A bishop moves along diagonals.");
         }
         super.move(file, rank, dump);

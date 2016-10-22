@@ -12,9 +12,8 @@ class Rook extends Piece {
         this.moved = false;
     }
 
-    public void move(int file, int rank, boolean dump) throws ChessRulesException{
-
-        if(!(this.rank == rank || this.file == file)){
+    public void move(int file, int rank, boolean dump) throws ChessRulesException {
+        if (!(this.rank == rank || this.file == file)) {
             throw new ChessRulesException("A rook moves along files or ranks.");
         }
         super.move(file, rank, dump);

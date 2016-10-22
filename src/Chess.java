@@ -14,10 +14,10 @@ import java.util.ArrayList;
  */
 public final class Chess {
 
-    private Chess() {}
+    private Chess() {
+    }
 
     public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException {
-
         System.out.println("Hello. It's a program for playing chess by Paweł Barbarski.");
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         ChessSet chessSet = new ChessSet();
@@ -29,9 +29,9 @@ public final class Chess {
             System.out.println("0. Exit the program.");
             for (int i = 1; i <= chessboards.length; i++) {
                 try {
-                    System.out.println(Integer.toString(i) + ". " + chessboards[i-1].getDeclaredField("description").get(null));
+                    System.out.println(Integer.toString(i) + ". " + chessboards[i - 1].getDeclaredField("description").get(null));
                 } catch (NoSuchFieldException e) {
-                    System.out.println(Integer.toString(i) + ". " + chessboards[i-1].getName());
+                    System.out.println(Integer.toString(i) + ". " + chessboards[i - 1].getName());
                 }
             }
             try {

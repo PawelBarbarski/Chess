@@ -69,8 +69,8 @@ public class JavaFXChessboard extends Application implements Chessboard {
         for (Node node : nodes) {
             gridPane.getChildren().remove(node);
         }
-        Image whiteSquare = new Image("/icons/sWhite.png");
-        Image blackSquare = new Image("/icons/sBlack.png");
+        Image whiteSquare = new Image(getClass().getClassLoader().getResourceAsStream("icons/sWhite.png"));
+        Image blackSquare = new Image(getClass().getClassLoader().getResourceAsStream("icons/sBlack.png"));
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 ImageView square = new ImageView();
@@ -93,7 +93,7 @@ public class JavaFXChessboard extends Application implements Chessboard {
             }
         }
         for (Piece piece : chessSet) {
-            Image pieceImage = new Image("/icons/" + piece.symbol + Chessboard.sideName(piece.white) + ".png");
+            Image pieceImage = new Image(getClass().getClassLoader().getResourceAsStream("icons/" + piece.symbol + Chessboard.sideName(piece.white) + ".png"));
             ImageView pieceView = new ImageView();
             pieceView.setFitWidth(64);
             pieceView.setPreserveRatio(true);
@@ -125,7 +125,7 @@ public class JavaFXChessboard extends Application implements Chessboard {
                     String[] symbols = {"Q", "R", "N", "B"};
                     int i = 0;
                     for (String symbol : symbols) {
-                        Image squareImage = new Image("/icons/s" + Chessboard.sideName(i % 2 == 0) + ".png");
+                        Image squareImage = new Image(getClass().getClassLoader().getResourceAsStream("icons/s" + Chessboard.sideName(i % 2 == 0) + ".png"));
                         ImageView squareView = new ImageView();
                         squareView.setFitWidth(64);
                         squareView.setPreserveRatio(true);
@@ -138,7 +138,7 @@ public class JavaFXChessboard extends Application implements Chessboard {
                             }
                         });
                         gridPane.add(squareView, i, 9);
-                        Image pieceImage = new Image("/icons/" + symbol + Chessboard.sideName(!chessSet.whitesMove) + ".png");
+                        Image pieceImage = new Image(getClass().getClassLoader().getResourceAsStream("icons/" + symbol + Chessboard.sideName(!chessSet.whitesMove) + ".png"));
                         ImageView pieceView = new ImageView();
                         pieceView.setFitWidth(64);
                         pieceView.setPreserveRatio(true);
